@@ -15,6 +15,7 @@ IGNORE      = RubyEventStore::InMemoryRepository\#append_with_synchronize \
               RubyEventStore::SpecificationResult\#direction \
               RubyEventStore::SpecificationResult\#stream_name \
               RubyEventStore::SpecificationResult\#global_stream? \
+              RubyEventStore::Mappers::EncryptedMapper\#prepare_cipher \
 
 
 SUBJECT     ?= RubyEventStore*
