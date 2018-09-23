@@ -228,9 +228,7 @@ module RubyEventStore
           end
         else
           data.inject({}) do |acc, (key, value)|
-            if (key.to_s =~ /\Aencrypted\|/)
-              acc[key.to_s.sub(/\Aencrypted\|/, "")] = decrypt(value, key_repository)
-            elsif value.is_a?(Hash)
+            if value.is_a?(Hash)
               acc[key] = deserialize_data(value, encryption_data)
             else
               acc[key] = value
