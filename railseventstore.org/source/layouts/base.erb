@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="text-sm sm:text-base">
   <head>
     <meta charset="utf-8">
     <meta content="ie=edge,chrome=1" http-equiv="x-ua-compatible">
@@ -19,7 +19,7 @@
     <link rel="apple-touch-icon" sizes="152x152" href="/images/favicons/res-rubies-152x152.png">
     <link rel="apple-touch-icon" sizes="167x167" href="/images/favicons/res-rubies-167x167.png">
   </head>
-  <body>
+  <body class="font-sans text-black antialiased leading-tight">
     <div class="frame">
       <header class="frame__header">
         <div class="container mx-auto">
@@ -29,11 +29,11 @@
 
       <%= yield %>
 
-      <header class="frame__footer">
+      <footer class="frame__footer mt-24">
         <div class="container mx-auto">
           <%= partial "partials/site_footer" %>
         </div>
-      </header>
+      </footer>
     </div>
     <%= javascript_include_tag "site" %>
     <%= partial "partials/tracking" %>
