@@ -3,6 +3,9 @@ require 'rom-mapper'
 require 'rom-repository'
 require 'ruby_event_store'
 require 'ruby_event_store/rom/event_repository'
+require 'ruby_event_store/rom/changesets/create_events'
+require 'ruby_event_store/rom/changesets/update_events'
+require 'ruby_event_store/rom/changesets/create_stream_entries'
 require 'ruby_event_store/rom/tuple_uniqueness_error'
 require 'ruby_event_store/rom/unit_of_work'
 require 'ruby_event_store/rom/version'
@@ -36,7 +39,7 @@ module RubyEventStore
       def register_error_handler(type, handler)
         container[:"#{type}_error_handlers"] << handler
       end
-  
+
       def handle_error(type, *args, swallow: [])
         yield
       rescue => ex
