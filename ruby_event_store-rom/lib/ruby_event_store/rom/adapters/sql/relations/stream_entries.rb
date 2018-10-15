@@ -11,14 +11,14 @@ module RubyEventStore
             end
           end
 
-          alias_method :take, :limit
+          alias take limit
 
           SERIALIZED_GLOBAL_STREAM_NAME = 'all'.freeze
 
           def create_changeset(tuples)
             changeset(ROM::Changesets::CreateStreamEntries, tuples)
           end
-  
+
           def by_stream(stream)
             where(stream: normalize_stream_name(stream))
           end
@@ -36,8 +36,8 @@ module RubyEventStore
           end
 
           DIRECTION_MAP = {
-            forward:  [:asc,  :>],
-            backward: [:desc, :<]
+            forward:  %i[asc >],
+            backward: %i[desc <]
           }.freeze
 
           def ordered(direction, stream, offset_entry_id = nil)

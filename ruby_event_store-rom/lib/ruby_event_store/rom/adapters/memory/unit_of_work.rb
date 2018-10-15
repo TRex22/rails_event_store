@@ -6,12 +6,12 @@ module RubyEventStore
           @mutex ||= Mutex.new
         end
 
-        def commit!(gateway, changesets, **options)
+        def commit!(_gateway, changesets, **_options)
           self.class.mutex.synchronize do
             committed = []
-            
+
             begin
-              while changesets.size > 0
+              until changesets.empty?
                 changeset = changesets.shift
                 relation = env.container.relations[changeset.relation.name]
 
@@ -20,12 +20,12 @@ module RubyEventStore
                 changeset.commit
               end
             rescue StandardError
-              committed.reverse.each do |changeset, relation|
+              committed.reverse_each do |changeset, relation|
                 relation
                   .restrict(id: changeset.to_a.map { |e| e[:id] })
                   .command(:delete, result: :many).call
               end
-              
+
               raise
             end
           end

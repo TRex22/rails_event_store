@@ -1,6 +1,6 @@
 require 'ruby_event_store/rom/sql'
 
-MIGRATIONS_PATH = 'db/migrate'
+MIGRATIONS_PATH = 'db/migrate'.freeze
 
 desc 'Setup ROM EventRespository environment'
 task 'db:setup' do

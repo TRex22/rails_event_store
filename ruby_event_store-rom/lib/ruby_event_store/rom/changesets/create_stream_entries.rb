@@ -6,7 +6,7 @@ module RubyEventStore
           def self.included(base)
             base.class_eval do
               relation :stream_entries
-      
+
               map do |tuple|
                 Hash(created_at: Time.now).merge(tuple)
               end

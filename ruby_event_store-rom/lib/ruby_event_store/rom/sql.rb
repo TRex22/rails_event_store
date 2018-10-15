@@ -35,26 +35,28 @@ module RubyEventStore
             # MySQL deadlocks or to allow Sequel to retry transactions
             # when the :retry_on option is specified.
             retry_on: Sequel::SerializationFailure,
-            before_retry: -> (num, ex) {
+            before_retry: lambda { |_num, ex|
               env.logger.warn("RETRY TRANSACTION [#{self.class.name} => #{ex.class.name}] #{ex.message}")
             }
           )
 
-          env.register_error_handler :unique_violation, -> ex {
+          env.register_error_handler :unique_violation, ->(ex) {
             case ex
             when ::ROM::SQL::UniqueConstraintError, Sequel::UniqueConstraintViolation
               raise EventDuplicatedInStream if IndexViolationDetector.new.detect(ex.message)
+
               raise WrongExpectedEventVersion
             end
           }
 
-          env.register_error_handler :not_found, -> (ex, event_id) {
+          env.register_error_handler :not_found, ->(ex, event_id) {
             case ex
             when ::ROM::TupleCountMismatchError
-              raise EventNotFound.new(event_id)
+              raise EventNotFound, event_id
             when Sequel::DatabaseError
               raise ex unless ex.message =~ /PG::InvalidTextRepresentation.*uuid/
-              raise EventNotFound.new(event_id)
+
+              raise EventNotFound, event_id
             end
           }
         end
@@ -62,7 +64,7 @@ module RubyEventStore
 
       class SpecHelper
         attr_reader :env
-        
+
         def initialize(database_uri = ENV['DATABASE_URL'])
           config = ::ROM::Configuration.new(
             :sql,
@@ -75,10 +77,10 @@ module RubyEventStore
           # config.default.use_logger Logger.new(STDOUT)
           # config.default.connection.pool.send(:preconnect, true)
           config.default.run_migrations
-    
+
           @env = ROM.setup(config)
         end
-        
+
         def run_lifecycle
           establish_gateway_connection
           load_gateway_schema
@@ -105,7 +107,7 @@ module RubyEventStore
           gateway.connection.pool.disconnect
         end
 
-      protected
+        protected
 
         def establish_gateway_connection
           # Manually preconnect because disconnecting and reconnecting

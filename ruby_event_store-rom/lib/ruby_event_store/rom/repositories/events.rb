@@ -16,6 +16,7 @@ module RubyEventStore
 
         def find_nonexistent_pks(event_ids)
           return event_ids unless event_ids.any?
+
           event_ids - events.by_pk(event_ids).pluck(:id)
         end
 
@@ -51,7 +52,7 @@ module RubyEventStore
           query = query.by_event_id(specification.with_ids) if specification.with_ids
 
           if specification.batched?
-            reader = ->(offset, limit) do
+            reader = lambda do |offset, limit|
               query_builder(query, offset: offset, limit: limit).to_ary
             end
             BatchEnumerator.new(specification.batch_size, limit || Float::INFINITY, reader).each
@@ -69,7 +70,7 @@ module RubyEventStore
           end
         end
 
-      protected
+        protected
 
         def query_builder(query, offset: nil, limit: nil)
           query = query.offset(offset) if offset
