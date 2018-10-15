@@ -36,10 +36,6 @@ require 'rom/sql'
       column :metadata, String, text: true
       column :data, String, text: true, null: false
       column :created_at, DateTime, null: false, index: 'index_event_store_events_on_created_at'
-
-      if sqlite # TODO: Is this relevant without ActiveRecord?
-        index :id, unique: true
-      end
     end
   end
 end
